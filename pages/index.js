@@ -100,7 +100,7 @@ export default function PaginaInicial() {
                         width: '100%', maxWidth: '700px',
                         borderRadius: '50px', padding: '32px', margin: '16px',
                         boxShadow: '0 2px 10px 0 rgb( 0 0 / 100%)',
-                        backgroundColor: appConfig.theme.colors.neutrals[700],
+                        backgroundColor: 'rgba(0,0,0,0.8)',
                     }}
                 >
                     {/* Formulário */}
@@ -111,7 +111,7 @@ export default function PaginaInicial() {
                             width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
                         }}
                     >
-                        <Titulo tag="h2">Boas vinda Duelista</Titulo>
+                        <Titulo tag="h2">Boas vindas Duelistas</Titulo>
                         <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
                             {appConfig.name}
                         </Text>
@@ -150,7 +150,7 @@ export default function PaginaInicial() {
                             alignItems: 'center',
                             maxWidth: '200px',
                             padding: '16px',
-                            backgroundColor: appConfig.theme.colors.neutrals[800],
+                            backgroundColor: 'rgba(0,0,0,0.5)',
                             border: '1px solid',
                             borderColor: appConfig.theme.colors.neutrals[999],
                             borderRadius: '10px',
