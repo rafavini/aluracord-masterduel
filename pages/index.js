@@ -1,6 +1,7 @@
 import appConfig from '../config.json'
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 
+
 function GlobalStyle() {
     return (
         <style global jsx>{`
@@ -47,20 +48,46 @@ function Titulo(props) {
     );
 }
 
+function Background_video(props) {
+    return (
+        <>
+            <video  autoPlay muted loop >
+                <source src={props.url} type='video/mp4' />
+            </video>
+
+            <style jsx>{`
+				video {
+					position: absolute;
+					z-index: -100;
+					width: 100vw;
+					height: 100vh;
+					object-fit: fill;
+				}
+			`}</style>
+
+        </>
+    );
+}
+
+
+
 
 export default function PaginaInicial() {
     const username = 'rafavini';
 
     return (
         <>
+            <Background_video url='https://giant.gfycat.com/KnobbyFlakyGeese.mp4'
+            />
             <GlobalStyle />
             <Box
-                styleSheet={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    backgroundImage: 'url(https://wallpapercave.com/wp/wp9083590.jpg)',
-                    backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
-                }}
-            >
+				styleSheet={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+				}}
+			>
+
                 <Box
                     styleSheet={{
                         display: 'flex',
@@ -72,7 +99,7 @@ export default function PaginaInicial() {
                         },
                         width: '100%', maxWidth: '700px',
                         borderRadius: '50px', padding: '32px', margin: '16px',
-                        boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
+                        boxShadow: '0 2px 10px 0 rgb( 0 0 / 100%)',
                         backgroundColor: appConfig.theme.colors.neutrals[700],
                     }}
                 >
