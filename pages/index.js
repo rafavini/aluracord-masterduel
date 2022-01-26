@@ -1,6 +1,7 @@
 import appConfig from '../config.json'
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
-import { useState } from 'react';
+import { SiGithub } from 'react-icons/si';
+import { useState} from 'react';
 import { useRouter } from 'next/router';
 
 
@@ -29,6 +30,9 @@ function Background_video(props) {
             <video autoPlay muted loop >
                 <source src={props.url} type='video/mp4' />
             </video>
+            <audio autoPlay>
+                <source src='/yugihoSong.mp3' type="audio/mpeg"/>
+            </audio>
 
             <style jsx>{`
 				video {
@@ -61,6 +65,7 @@ export default function PaginaInicial() {
             <Background_video url='https://giant.gfycat.com/KnobbyFlakyGeese.mp4'
             />
             <Box
+
                 styleSheet={{
                     display: 'flex',
                     alignItems: 'center',
@@ -77,7 +82,7 @@ export default function PaginaInicial() {
                             xs: 'column',
                             sm: 'row',
                         },
-                        width: '100%', maxWidth: '700px',
+                        width: '100%', maxWidth: '600px',
                         borderRadius: '50px', padding: '32px', margin: '16px',
                         boxShadow: '0 2px 10px 0 rgb( 0 0 / 100%)',
                         backgroundColor: 'rgba(0,0,0,0.8)',
@@ -155,9 +160,7 @@ export default function PaginaInicial() {
                             flexDirection: 'column',
                             alignItems: 'center',
                             maxWidth: '200px',
-                            padding: '16px',
-                            backgroundColor: 'rgba(0,0,0,0.5)',
-                            border: '1px solid',
+                            padding: '16px',                   
                             borderColor: appConfig.theme.colors.neutrals[999],
                             borderRadius: '10px',
                             flex: 1,
@@ -180,7 +183,7 @@ export default function PaginaInicial() {
                                 borderRadius: '1000px'
                             }}
                         >
-                            {username}
+                           <SiGithub/>&nbsp;{username}
                         </Text>
 
                         <Text
@@ -193,7 +196,7 @@ export default function PaginaInicial() {
                             }}
 
                         >
-                            {userLocation}
+                           {userLocation}
                         </Text>
 
                     </Box>

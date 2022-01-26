@@ -21,7 +21,7 @@ export default function NotFound() {
                 }
                 .container{
                     width: 50vw;
-                    padding-right: 180px;
+                    padding-right: 150px;
                     height: 50vh;
                     display: flex;
                     
