@@ -1,36 +1,11 @@
 import appConfig from '../config.json'
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 
-function GlobalStyle() {
-    return (
-        <style global jsx>{`
-        * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      body {
-        font-family: 'Open Sans', sans-serif;
-      }
-      /* App fit Height */ 
-      html, body, #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */ 
-        
-        `}</style>
-    );
-}
+
+
 
 function Titulo(props) {
     const Tag = props.tag || 'h1';
@@ -51,7 +26,7 @@ function Titulo(props) {
 function Background_video(props) {
     return (
         <>
-            <video  autoPlay muted loop >
+            <video autoPlay muted loop >
                 <source src={props.url} type='video/mp4' />
             </video>
 
@@ -73,20 +48,25 @@ function Background_video(props) {
 
 
 export default function PaginaInicial() {
-    const username = 'rafavini';
+    const [username, setUsername] = useState('rafavini') // setando o valor inicial da variável username como rafavini
+    const roteamento = useRouter();
+    const [userLocation, setUserLocation] = useState(`Campo Grande, Brazil `) // setando a localização inicial do usuário vazia.
+
+
+    //requisição na api
+
 
     return (
         <>
             <Background_video url='https://giant.gfycat.com/KnobbyFlakyGeese.mp4'
             />
-            <GlobalStyle />
             <Box
-				styleSheet={{
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-				}}
-			>
+                styleSheet={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
 
                 <Box
                     styleSheet={{
@@ -106,6 +86,10 @@ export default function PaginaInicial() {
                     {/* Formulário */}
                     <Box
                         as="form"
+                        onSubmit={function (event) {
+                            event.preventDefault(); // parar de ficar recarregando a página quando clicar no botão
+                            roteamento.push('/chat');//  usando o rout do next para fazer a paginação
+                        }}
                         styleSheet={{
                             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                             width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
@@ -117,6 +101,28 @@ export default function PaginaInicial() {
                         </Text>
 
                         <TextField
+
+                            //função que captura o que o usuario digitou no campo de texto, e atualiza a variável username com a função setUsername
+                            onChange={function (event) {
+                                const valor = event.target.value
+
+
+                                
+                                if (valor.length > 2) {// verifica se o valor digitado no campo do texto é maior que 2 para fazer a troca da variável username
+                                    setUsername(valor)
+                                    fetch(`https://api.github.com/users/${valor}`) //coleta os dados do github
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            setUserLocation(data.location) // seta a variavel userLocation com a location do usuário
+                                        })
+                                       
+                                } else {
+                                    setUsername('rafavini')
+                                    setUserLocation('Campo Grande, Brazil')
+                                }
+
+
+                            }}
                             fullWidth
                             textFieldColors={{
                                 neutral: {
@@ -163,7 +169,7 @@ export default function PaginaInicial() {
                                 borderRadius: '50%',
                                 marginBottom: '16px',
                             }}
-                            src={`https://github.com/${username}.png`}
+                            src={username.length > 2 ? `https://github.com/${username}.png`: `https://github.com/rafavini.png` }
                         />
                         <Text
                             variant="body4"
@@ -176,6 +182,20 @@ export default function PaginaInicial() {
                         >
                             {username}
                         </Text>
+
+                        <Text
+                            variant="body4"
+                            styleSheet={{
+                                color: appConfig.theme.colors.neutrals[200],
+                                backgroundColor: appConfig.theme.colors.neutrals[900],
+                                padding: '3px 10px',
+                                borderRadius: '1000px'
+                            }}
+
+                        >
+                            {userLocation}
+                        </Text>
+
                     </Box>
                     {/* Photo Area */}
                 </Box>
