@@ -194,7 +194,7 @@ export default function PaginaInicial() {
                                 padding: '3px 10px',
                                 borderRadius: '1000px'
                             }}
-
+                            
                         >
                            {userLocation}
                         </Text>
