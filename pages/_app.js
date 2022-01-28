@@ -10,6 +10,28 @@ function GlobalStyle() {
       body {
         font-family: 'Open Sans', sans-serif;
       }
+
+      @-webkit-keyframes rotate-center {
+        0% {
+          -webkit-transform: rotate(0);
+                  transform: rotate(0);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+                  transform: rotate(360deg);
+        }
+      }
+      @keyframes rotate-center {
+        0% {
+          -webkit-transform: rotate(0);
+                  transform: rotate(0);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+                  transform: rotate(360deg);
+        }
+        
+      }
       /* App fit Height */ 
       html, body, #__next {
         min-height: 100vh;

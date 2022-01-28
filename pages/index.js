@@ -3,10 +3,7 @@ import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 import { SiGithub } from 'react-icons/si';
 import { useState} from 'react';
 import { useRouter } from 'next/router';
-
-
-
-
+import githubInfos from '../services/githubAPI'
 
 function Titulo(props) {
     const Tag = props.tag || 'h1';
@@ -56,9 +53,9 @@ export default function PaginaInicial() {
     const roteamento = useRouter();
     const [userLocation, setUserLocation] = useState(`Campo Grande, Brazil `) // setando a localização inicial do usuário vazia.
 
-
     //requisição na api
-
+    const test = githubInfos('rafavini')
+    console.log(teste);
 
     return (
         <>
@@ -116,7 +113,7 @@ export default function PaginaInicial() {
                                 if (valor.length > 2) {// verifica se o valor digitado no campo do texto é maior que 2 para fazer a troca da variável username
                                     setUsername(valor)
                                     fetch(`https://api.github.com/users/${valor}`) //coleta os dados do github
-                                        .then(response => response.json())
+                                        .then (response =>  response.json())
                                         .then(data => {
                                             setUserLocation(data.location) // seta a variavel userLocation com a location do usuário
                                         })

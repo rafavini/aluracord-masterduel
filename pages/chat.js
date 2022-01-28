@@ -1,32 +1,62 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import appConfig from '../config.json';
-import {MdDeleteOutline} from 'react-icons/md'
+import { MdDeleteOutline } from 'react-icons/md'
+import { createClient } from '@supabase/supabase-js'
+import loadingImg from './components/loading'
+
+
+
+
+//banco de dados 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMyMjk4NiwiZXhwIjoxOTU4ODk4OTg2fQ.GzjrhksATuf7869WWxnYGHiK-kjGehGdyzYJhvRA38k'
+const SUPABASE_URL = 'https://cjhtfsaiuntftwrezjqc.supabase.co'
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 
 export default function ChatPage() {
     // Sua lógica vai aqui
     const [mensagem, setMensagem] = useState('');
     const [listaDeMensagens, setListaDeMensagens] = useState([]);
 
+    //usa os dados do servidor
+    useEffect(() => {
+       
+        const dadosDoSupabase = supabaseClient
+            .from('mensagem')
+            .select('*')
+            .order('id', {ascending: false})
+            .then(( {data}) => {
+                console.log('dados da consulta', data);
+                setListaDeMensagens(data)
+            
+            })
+    }, []);
 
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
-            id: listaDeMensagens.length + 1,
             de: 'rafavini',
             texto: novaMensagem,
 
         }
-        setListaDeMensagens([
-            mensagem,
-            ...listaDeMensagens,
+        supabaseClient
+            .from('mensagem')
+            .insert([
+                mensagem
+            ])
+            .then(({data}) => {
+                console.log('criando mensagem: ', data);
+                setListaDeMensagens([
+                    data[0],
+                    ...listaDeMensagens
+                ])
+            })
+        setMensagem('');
 
-        ])
-        setMensagem('')
+
+      
     }
 
-
-
- 
 
     // ./Sua lógica vai aqui
     return (
@@ -57,6 +87,7 @@ export default function ChatPage() {
                 <Header />
                 <Box
                     styleSheet={{
+                        
                         position: 'relative',
                         display: 'flex',
                         flex: 1,
@@ -67,12 +98,14 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
-
-                    <MessageList mensagens={listaDeMensagens}  setListaDeMensagens={setListaDeMensagens}  />
+                    {listaDeMensagens < 1 ? loadingImg(): <MessageList mensagens={listaDeMensagens} setListaDeMensagens={setListaDeMensagens} /> }
+                    
 
                     <Box
+                        
                         as="form"
                         styleSheet={{
+                        
                             display: 'flex',
                             alignItems: 'center',
                         }}
@@ -81,7 +114,10 @@ export default function ChatPage() {
                         <TextField
                             value={mensagem}
                             onChange={(event) => {
+                            
                                 setMensagem(event.target.value)
+                                
+                                
                             }}
 
                             onKeyPress={(event) => {
@@ -160,26 +196,36 @@ function Header() {
 
 function MessageList(props) {
     //console.log('MessageList', props);
-    
+
 
     //funcão que deleta as mensagem da tela
-    function deleteMensagem(mensagemID){
+    function deleteMensagem(mensagemID) {
         // para cada elemento do vetor ele verifica se o id do que eu cliquei é diferente dos que estão no vetor
         // em caso de positivo ele gera um novo vetor newListaMensagem com os valores diferente do id que eu cliquei
+
+
+        //deletando a mensagem do servidor
+        supabaseClient
+            .from('mensagem')
+            .delete()
+            .match({id: mensagemID})
+            .then((response) => {
+                console.log('deletei essa mensagem:',response)
+            })
+            
+        //deletando a mensagem na tela    
         let newListaMensagem = props.mensagens.filter((item) => {
-            if(item.id != mensagemID){
+            if (item.id != mensagemID) {
                 return item
             }
         })
 
-        console.log(newListaMensagem);
-
         props.setListaDeMensagens([
             ...newListaMensagem
         ])
-     
+
     }
-    
+
     return (
         <Box
             tag="ul"
@@ -209,10 +255,10 @@ function MessageList(props) {
                     >
                         <Box
                             styleSheet={{
-                                marginBottom: '8px',
+                                marginBottom: '-10px',
                             }}
                         >
-                            
+
                             <Image
                                 styleSheet={{
                                     width: '20px',
@@ -220,15 +266,15 @@ function MessageList(props) {
                                     borderRadius: '50%',
                                     display: 'inline-block',
                                     marginRight: '8px',
-                                    
-                                    
+
+
                                 }}
                                 src={`https://github.com/${mensagem.de}.png`}
                             />
                             <Text tag="strong">
-                                {mensagem.de}
+                                {'@'+mensagem.de}
                             </Text>
-                           
+
                             <Text
                                 styleSheet={{
                                     fontSize: '10px',
@@ -240,15 +286,15 @@ function MessageList(props) {
                                 {(new Date().toLocaleDateString())}
                             </Text>
 
-                           <Button 
+                            <Button
                                 type='button'
-                                label={<MdDeleteOutline/>}
+                                label={<MdDeleteOutline />}
                                 onClick={(() => {
                                     deleteMensagem(mensagem.id)
-                                    
+
                                 })}
                                 styleSheet={{
-                                    height: '20px',
+                                    height: '10px',
                                     width: '20px',
                                     marginLeft: '95%',
                                     backgroundColor: appConfig.theme.colors.neutrals[800],
@@ -256,9 +302,9 @@ function MessageList(props) {
                                         backgroundColor: appConfig.theme.colors.neutrals[999],
                                     }
                                 }}
-                           
-                           />
-                               
+
+                            />
+
                         </Box>
                         {mensagem.texto}
                     </Text>

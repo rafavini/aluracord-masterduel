@@ -57,7 +57,7 @@ export default function NotFound() {
                     position: absolute;
                     width: 100%;
                     height: 100%;
-                    -webkit-backface-visibility: hidden; /* Safari */
+                    -webkit-backface-visibility: hidden; 
                     backface-visibility: hidden;
                   }
                   
@@ -72,14 +72,7 @@ export default function NotFound() {
                     background-color: #13315c;
                     color: white;
                     transform: rotateY(180deg);
-                  }
-                
-              
-               
-
-
-                      
-      
+                  } 
 			`}</style>
 
         </>
