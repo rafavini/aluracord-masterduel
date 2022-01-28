@@ -3,7 +3,7 @@ import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 import { SiGithub } from 'react-icons/si';
 import { useState} from 'react';
 import { useRouter } from 'next/router';
-import githubInfos from '../services/githubAPI'
+
 
 function Titulo(props) {
     const Tag = props.tag || 'h1';
@@ -53,9 +53,7 @@ export default function PaginaInicial() {
     const roteamento = useRouter();
     const [userLocation, setUserLocation] = useState(`Campo Grande, Brazil `) // setando a localização inicial do usuário vazia.
 
-    //requisição na api
-    const test = githubInfos('rafavini')
-    console.log(teste);
+    
 
     return (
         <>
