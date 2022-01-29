@@ -44,7 +44,7 @@ export function ButtonSendSticker(props) {
               xs: '200px',
               sm: '290px',
             },
-            height: '300px',
+            height: '500px',
             right: '30px',
             bottom: '30px',
             padding: '16px',
