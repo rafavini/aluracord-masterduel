@@ -5,7 +5,7 @@ import { MdDeleteOutline } from 'react-icons/md'
 import { createClient } from '@supabase/supabase-js'
 import loadingImg from './components/loading'
 import { useRouter } from 'next/router';
-import { ButtonSendSticker } from './components/ButtonSendSticker'
+import  ButtonSendSticker  from './components/ButtonSendSticker'
 
 
 
