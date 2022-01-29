@@ -4,6 +4,8 @@ import appConfig from '../config.json';
 import { MdDeleteOutline } from 'react-icons/md'
 import { createClient } from '@supabase/supabase-js'
 import loadingImg from './components/loading'
+import { useRouter } from 'next/router';
+import { ButtonSendSticker } from './components/ButtonSendSticker'
 
 
 
@@ -14,28 +16,70 @@ const SUPABASE_URL = 'https://cjhtfsaiuntftwrezjqc.supabase.co'
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 
+function escutaMensagemEmTempoReal(adicionaMensagem) {
+    return (
+        supabaseClient
+            .from('mensagem')
+            .on('*', (response) => {
+                adicionaMensagem(response)
+            })
+
+    ).subscribe();
+}
+
+
 export default function ChatPage() {
     // Sua lógica vai aqui
+    const roteamento = useRouter();
+    const usuarioLogado = roteamento.query.username; // pegando o usuario pela url
     const [mensagem, setMensagem] = useState('');
     const [listaDeMensagens, setListaDeMensagens] = useState([]);
 
+
     //usa os dados do servidor
     useEffect(() => {
-       
-        const dadosDoSupabase = supabaseClient
+
+        supabaseClient
             .from('mensagem')
             .select('*')
-            .order('id', {ascending: false})
-            .then(( {data}) => {
+            .order('id', { ascending: false })
+            .then(({ data }) => {
                 console.log('dados da consulta', data);
                 setListaDeMensagens(data)
-            
+
             })
+
+        escutaMensagemEmTempoReal((novaMensagem) => {
+            //console.log('nova mensagem', novaMensagem)
+            if (novaMensagem.eventType === 'INSERT') {
+                setListaDeMensagens((valorAtualDaLista) => {
+                    return (
+                        setListaDeMensagens([
+                            novaMensagem.new,
+                            ...valorAtualDaLista,
+                        ])
+                    )
+                })
+            } else if(novaMensagem.eventType === 'DELETE') {
+                setListaDeMensagens((currentValue) => {
+                     
+                    let newListaMensagem = currentValue.filter((item) => {
+                        if (item.id != novaMensagem.old.id) {
+                            return item
+                        }
+                    })
+                    setListaDeMensagens([
+                        ...newListaMensagem
+                    ])
+                })
+            }
+
+        });
     }, []);
 
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
-            de: 'rafavini',
+            de: usuarioLogado,
             texto: novaMensagem,
 
         }
@@ -44,17 +88,14 @@ export default function ChatPage() {
             .insert([
                 mensagem
             ])
-            .then(({data}) => {
+            .then(({ data }) => {
                 console.log('criando mensagem: ', data);
-                setListaDeMensagens([
-                    data[0],
-                    ...listaDeMensagens
-                ])
+
             })
         setMensagem('');
 
 
-      
+
     }
 
 
@@ -72,6 +113,8 @@ export default function ChatPage() {
 
             <Box
                 styleSheet={{
+
+                    outline: '2px solid red',
                     display: 'flex',
                     flexDirection: 'column',
                     flex: 1,
@@ -79,7 +122,7 @@ export default function ChatPage() {
                     borderRadius: '50px',
                     backgroundColor: appConfig.theme.colors.neutrals[700],
                     height: '100%',
-                    maxWidth: '30%',
+                    maxWidth: '95%',
                     maxHeight: '95vh',
                     padding: '32px',
                 }}
@@ -87,7 +130,7 @@ export default function ChatPage() {
                 <Header />
                 <Box
                     styleSheet={{
-                        
+
                         position: 'relative',
                         display: 'flex',
                         flex: 1,
@@ -98,14 +141,14 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
-                    {listaDeMensagens < 1 ? loadingImg(): <MessageList mensagens={listaDeMensagens} setListaDeMensagens={setListaDeMensagens} /> }
-                    
+                    {listaDeMensagens < 1 ? loadingImg() : <MessageList mensagens={listaDeMensagens} setListaDeMensagens={setListaDeMensagens} />}
+
 
                     <Box
-                        
+
                         as="form"
                         styleSheet={{
-                        
+
                             display: 'flex',
                             alignItems: 'center',
                         }}
@@ -114,10 +157,10 @@ export default function ChatPage() {
                         <TextField
                             value={mensagem}
                             onChange={(event) => {
-                            
+
                                 setMensagem(event.target.value)
-                                
-                                
+
+
                             }}
 
                             onKeyPress={(event) => {
@@ -138,6 +181,12 @@ export default function ChatPage() {
                                 backgroundColor: appConfig.theme.colors.neutrals[800],
                                 marginRight: '12px',
                                 color: appConfig.theme.colors.neutrals[200],
+                            }}
+                        />
+
+                        <ButtonSendSticker
+                            onStickerClick={(sticker) => {
+                                handleNovaMensagem(':sticker:' + sticker);
                             }}
                         />
                         <Button
@@ -208,21 +257,12 @@ function MessageList(props) {
         supabaseClient
             .from('mensagem')
             .delete()
-            .match({id: mensagemID})
+            .match({ id: mensagemID })
             .then((response) => {
-                console.log('deletei essa mensagem:',response)
+                console.log('deletei essa mensagem:', response)
             })
-            
-        //deletando a mensagem na tela    
-        let newListaMensagem = props.mensagens.filter((item) => {
-            if (item.id != mensagemID) {
-                return item
-            }
-        })
 
-        props.setListaDeMensagens([
-            ...newListaMensagem
-        ])
+
 
     }
 
@@ -231,6 +271,7 @@ function MessageList(props) {
             tag="ul"
             styleSheet={{
                 overflow: 'auto',
+                overflowY: 'auto',
                 display: 'flex',
                 flexDirection: 'column-reverse',
                 flex: 1,
@@ -272,7 +313,7 @@ function MessageList(props) {
                                 src={`https://github.com/${mensagem.de}.png`}
                             />
                             <Text tag="strong">
-                                {'@'+mensagem.de}
+                                {'@' + mensagem.de}
                             </Text>
 
                             <Text
@@ -306,7 +347,13 @@ function MessageList(props) {
                             />
 
                         </Box>
-                        {mensagem.texto}
+                        {mensagem.texto.startsWith(':sticker:')
+                            ? (
+                                <Image src={mensagem.texto.replace(':sticker:', '')} />
+                            )
+                            : (
+                                mensagem.texto
+                            )}
                     </Text>
                 )
             })}

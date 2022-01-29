@@ -27,9 +27,7 @@ function Background_video(props) {
             <video autoPlay muted loop >
                 <source src={props.url} type='video/mp4' />
             </video>
-            <audio autoPlay>
-                <source src='/yugihoSong.mp3' type="audio/mpeg"/>
-            </audio>
+            
 
             <style jsx>{`
 				video {
@@ -88,7 +86,7 @@ export default function PaginaInicial() {
                         as="form"
                         onSubmit={function (event) {
                             event.preventDefault(); // parar de ficar recarregando a página quando clicar no botão
-                            roteamento.push('/chat');//  usando o rout do next para fazer a paginação
+                            roteamento.push(`/chat?username=${username}`);//  usando o rout do next para fazer a paginação
                         }}
                         styleSheet={{
                             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -101,6 +99,8 @@ export default function PaginaInicial() {
                         </Text>
 
                         <TextField
+                            required
+                            placeholder='Digite o seu usuário do GitHub'
 
                             //função que captura o que o usuario digitou no campo de texto, e atualiza a variável username com a função setUsername
                             onChange={function (event) {
