@@ -7,7 +7,7 @@ https://aluracord-masterduel.vercel.app/
 # Preview
 <img src='https://i.imgur.com/3jVUgD8.png'></img>
 
-#Descrição
+# Descrição
 Desenvolvimento de um Chat com figurinhas no estilo do discord. Frontend usando React, css e javascript. Backend usando next e supabase e na parte de deploying foi usado a Vercel.
 
 # Tecnologias 
